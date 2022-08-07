@@ -9,48 +9,48 @@ X11_FILE="$EFLAGS/electron-flags.conf.x"
 CONFIG_ACTUAL=-
 
 if [[ -L "$MAIN_FILE" ]]; then # Check if it is a symlink
-	case "$(realpath "$MAIN_FILE")" in
-	*"wl"*)
-		CONFIG_ACTUAL=wayland
-		;;
-	*"x"*)
-		CONFIG_ACTUAL=x11
-		;;
-	*)
-		exit 120
-		;;
-	esac
+  case "$(realpath "$MAIN_FILE")" in
+    *"wl"*)
+      CONFIG_ACTUAL=wayland
+      ;;
+    *"x"*)
+      CONFIG_ACTUAL=x11
+      ;;
+    *)
+      exit 120
+      ;;
+  esac
 fi
 
 if command -v loginctl >/dev/null 2>&1 && [[ $(loginctl show-session "$(awk '/tty/ {print $1}' <(loginctl))" -p Type | awk -F= '{print $2}') != *"tty"* ]]; then
-	RUNTIME_ACTUAL=$(loginctl show-session "$(awk '/tty/ {print $1}' <(loginctl))" -p Type | awk -F= '{print $2}')
+  RUNTIME_ACTUAL=$(loginctl show-session "$(awk '/tty/ {print $1}' <(loginctl))" -p Type | awk -F= '{print $2}')
 elif [[ -v WAYLAND_DISPLAY ]]; then
-	RUNTIME_ACTUAL=wayland
+  RUNTIME_ACTUAL=wayland
 elif [[ -v DISPLAY ]]; then
-	RUNTIME_ACTUAL=x11
+  RUNTIME_ACTUAL=x11
 else
-	exit 121
+  exit 121
 fi
 
 # Electron flags
 
 if [[ "$RUNTIME_ACTUAL" != "$CONFIG_ACTUAL" ]]; then
-	if [[ "$RUNTIME_ACTUAL" == "wayland" ]]; then
-		if [[ -f "$MAIN_FILE" ]]; then
-			mv -a "$MAIN_FILE" "$MAIN_FILE.bak"
-		fi
-		ln -s "$WAYLAND_FILE" "$MAIN_FILE"
-	else
-		if [[ -f "$MAIN_FILE" ]]; then
-			mv -a "$MAIN_FILE" "$MAIN_FILE.bak"
-		fi
+  if [[ "$RUNTIME_ACTUAL" == "wayland" ]]; then
+    if [[ -f "$MAIN_FILE" ]]; then
+      mv -a "$MAIN_FILE" "$MAIN_FILE.bak"
+    fi
+    ln -s "$WAYLAND_FILE" "$MAIN_FILE"
+  else
+    if [[ -f "$MAIN_FILE" ]]; then
+      mv -a "$MAIN_FILE" "$MAIN_FILE.bak"
+    fi
 
-		ln -s "$X11_FILE" "$MAIN_FILE"
-	fi
+    ln -s "$X11_FILE" "$MAIN_FILE"
+  fi
 fi
 
 # Env variables
 
 if [[ "$RUNTIME_ACTUAL" == "wayland" ]]; then
-	export MOZ_ENABLE_WAYLAND=1
+  export MOZ_ENABLE_WAYLAND=1
 fi

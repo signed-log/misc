@@ -8,8 +8,8 @@ DOCDIR="$HOME/.local/share/docs/python3"                                        
 ! getopt --test >/dev/null # Check for enhanced getopt
 
 if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
-	echo "Getopt fail" # If not enhanced
-	exit 1
+  echo "Getopt fail" # If not enhanced
+  exit 1
 fi
 
 LONGOPTS=version: # Set options
@@ -17,22 +17,22 @@ OPTIONS=v:
 
 ! PARSED="$(getopt --options="$OPTIONS" --longoptions="$LONGOPTS" --name "$0" -- "$@")"
 if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
-	exit 2
+  exit 2
 fi
 
 eval set -- "$PARSED" # Fix quoting
 
 case "$1" in
--v | --version)
-	PYVERSION="$2"
-	;;
-*)
-	echo "Auto-selecting $PYVERSION"
-	;;
+  -v | --version)
+    PYVERSION="$2"
+    ;;
+  *)
+    echo "Auto-selecting $PYVERSION"
+    ;;
 esac
 
 if [[ -f "$DOCDIR/$PYVERSION/index.html" ]]; then
-	xdg-open "$DOCDIR/$PYVERSION/index.html" 2>/dev/null
+  xdg-open "$DOCDIR/$PYVERSION/index.html" 2>/dev/null
 else
-	echo "Inexistent"
+  echo "Inexistent"
 fi
