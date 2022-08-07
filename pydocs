@@ -15,7 +15,7 @@ fi
 LONGOPTS=version: # Set options
 OPTIONS=v:
 
-! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@")
+! PARSED="$(getopt --options="$OPTIONS" --longoptions="$LONGOPTS" --name "$0" -- "$@")"
 if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
 	exit 2
 fi
